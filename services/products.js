@@ -1,30 +1,53 @@
 const productsMocks = require("../utils/mocks/products");
+const MongoLib = require("../lib/mongo");
 
 class ProductsService {
-  constructor() {}
-
-  getProducts({ tags }) {
-    return Promise.resolve(productsMocks);
+  constructor() {
+    this.collection = "products";
+    this.mongoDB = new MongoLib();
   }
 
-  getProduct({ productId }) {
-    return Promise.resolve(productsMocks[0]);
+  async getProducts({ tags }) {
+    const query = tags && { tags: { $in: tags } };
+    const products = await this.mongoDB.getAll(this.collection, query);
+    console.log("productos", products);
+    return products || [];
   }
 
-  createProduct({ product }) {
-    return Promise.resolve(productsMocks[0]);
+  async getProduct({ productId }) {
+    const product = await this.mongoDB.get(this.collection, productId);
+    return product || {};
   }
 
-  partialUpdateProduct({ productId, product }) {
-    return Promise.resolve(productsMocks[0]);
+  async createProduct({ product }) {
+    const createProductId = await this.mongoDB.create(this.collection, product);
+    return createProductId;
   }
 
-  updateProduct({ productId, product }) {
-    return Promise.resolve(productsMocks[0]);
+  async partialUpdateProduct({ productId, product }) {
+    const partialUpdateProduct = await this.mongoDB.partial(
+      this.collection,
+      productId,
+      product
+    );
+    return partialUpdateProduct || productId;
   }
 
-  deleteProduct({ productId }) {
-    return Promise.resolve(productsMocks[0]);
+  async updateProduct({ productId, product }) {
+    const updateProductId = await this.mongoDB.update(
+      this.collection,
+      productId,
+      product
+    );
+    return updateProductId || productId;
+  }
+
+  async deleteProduct({ productId }) {
+    const deleteProductId = await this.mongoDB.delete(
+      this.collection,
+      productId
+    );
+    return deleteProductId;
   }
 }
 
