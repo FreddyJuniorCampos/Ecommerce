@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const ProductsService = require("../../services/products");
+const validation = require("../../utils/middlewares/validationHandler");
+
+const {
+  productIdSchema,
+  productTagSchema,
+  createProductSchema,
+  updateProductSchema,
+} = require("../../utils/schemas/products");
 
 // New instance class
 const productService = new ProductsService();
@@ -8,16 +16,22 @@ const productService = new ProductsService();
 // Routes
 router.get("/", listProducts);
 router.get("/:productId", getProduct);
-router.post("/", createProduct);
-router.put("/:productId", updateProduct);
+router.post("/", validation(createProductSchema), createProduct);
+router.put(
+  "/:productId",
+  validation(productIdSchema, "params"),
+  validation(updateProductSchema),
+  updateProduct
+);
 router.patch("/:productId", partialUpdateProduct);
 router.delete("/:productId", deleteProduct);
 
 // Functions
 async function listProducts(req, res, next) {
   const { tags } = req.query;
-  console.log("req", req.query);
   try {
+    // throw new Error("This is an error from the API");
+
     const products = await productService.getProducts({ tags });
     res.status(200).json({
       data: products,
