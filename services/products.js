@@ -10,7 +10,6 @@ class ProductsService {
   async getProducts({ tags }) {
     const query = tags && { tags: { $in: tags } };
     const products = await this.mongoDB.getAll(this.collection, query);
-    console.log("productos", products);
     return products || [];
   }
 
