@@ -21,3 +21,31 @@ helmet: Middleware de seguridad
 express-debug: El debugger predeterminado de express para debuggear tu aplicación
 express-slash: Permite aceptar urls sin el slash (’/’)
 passport: Para autentifación y autorización
+
+JWT
+Es un estándar (RFC 7519) que define una forma de contenido seguro para transmitir información entre dos partes. Puede estar firmado usando un algoritmo (HMAC) o un par de llaves (public / private) usando (RSA / ECDSA).
+
+Escenarios
+
+Autorización,el escenario típico donde una vez que el usuario esta loggeado, cada subsecuente petición deberá incluir el JWT, permitiendo al usuario acceder a rutas, servicios y recursos donde está autorizado con el JWT.
+. Intercambio de información, el escenario donde al utilizar, el par de llaves, se puede asegurar el intercambio de información sabiendo la procedencia del emisor. Adicionalmente, siendo un proceso cifrado usando el header y el payload, podemos verificar si el contenido ha sido manipulado.
+
+Estructura de un JWT
+
+Header
+Compuesto de dos partes:
+. El tipo de token, JWT.
+. El algoritmo usado para cifrar, HMAC SHA256 o RSA.
+
+Payload
+Contenido de tres tipos:
+. Registro, iss (issuer) exp (expiration time) sub (subject), aud (audience) u otros.
+. Público, definido en formato IANA JWT Registry.
+. Privado, personalizados para compartir información entre las partes sin que sean públicos o registrados.
+
+Signature
+. Es una combinación entre:
+. Header
+. Payload
+. Una cadena o “secret”
+. Algoritmo determinado en el header.

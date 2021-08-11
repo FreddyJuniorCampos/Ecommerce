@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const ProductsService = require("../../services/products");
 const validation = require("../../utils/middlewares/validationHandler");
+const passport = require("passport");
 
 const {
   productIdSchema,
@@ -9,6 +10,9 @@ const {
   createProductSchema,
   updateProductSchema,
 } = require("../../utils/schemas/products");
+
+// JWT strategy
+require("../../utils/auth/strategies/jwt");
 
 // New instance class
 const productService = new ProductsService();
@@ -19,12 +23,17 @@ router.get("/:productId", getProduct);
 router.post("/", validation(createProductSchema), createProduct);
 router.put(
   "/:productId",
+  passport.authenticate("jwt", { session: false }),
   validation(productIdSchema, "params"),
   validation(updateProductSchema),
   updateProduct
 );
 router.patch("/:productId", partialUpdateProduct);
-router.delete("/:productId", deleteProduct);
+router.delete(
+  "/:productId",
+  passport.authenticate("jwt", { session: false }),
+  deleteProduct
+);
 
 // Functions
 async function listProducts(req, res, next) {
