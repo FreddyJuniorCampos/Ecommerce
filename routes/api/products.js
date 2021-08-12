@@ -3,6 +3,12 @@ const ProductsService = require("../../services/products");
 const validation = require("../../utils/middlewares/validationHandler");
 const passport = require("passport");
 
+const cacheResponse = require("../../utils/cacheResponse");
+const {
+  FIVE_MINUTES_IN_SECONDS,
+  SIXTY_MINUTES_IN_SECONDS,
+} = require("../../utils/time");
+
 const {
   productIdSchema,
   productTagSchema,
@@ -39,6 +45,7 @@ function productsApi(app) {
 
   // Functions
   async function listProducts(req, res, next) {
+    cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
     const { tags } = req.query;
     try {
       // throw new Error("This is an error from the API");
@@ -54,6 +61,7 @@ function productsApi(app) {
   }
 
   async function getProduct(req, res, next) {
+    cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
     const { productId } = req.params;
     try {
       const product = await productService.getProduct({ productId });
